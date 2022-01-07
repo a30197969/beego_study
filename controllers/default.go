@@ -18,6 +18,7 @@ func (c *MainController) Get() {
 }
 func (c *MainController) Test() {
 	c.EnableRender = false
+	fmt.Println(c.GetString("hello"))
 	fmt.Println(c.Ctx.Request.RequestURI)
 	fmt.Println(c.Ctx.Input.Query("name"))
 	fmt.Println(c.Ctx.Input.Query("age"))

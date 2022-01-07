@@ -1,0 +1,1 @@
+D:\GoPath\src\beego_study/views/thread/edit.tpl
