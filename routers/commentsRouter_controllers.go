@@ -10,7 +10,7 @@ func init() {
     beego.GlobalControllerRouter["beego_study/controllers:ThreadController"] = append(beego.GlobalControllerRouter["beego_study/controllers:ThreadController"],
         beego.ControllerComments{
             Method: "Post",
-            Router: "/",
+            Router: "/thread/",
             AllowHTTPMethods: []string{"post"},
             MethodParams: param.Make(),
             Filters: nil,
@@ -19,7 +19,7 @@ func init() {
     beego.GlobalControllerRouter["beego_study/controllers:ThreadController"] = append(beego.GlobalControllerRouter["beego_study/controllers:ThreadController"],
         beego.ControllerComments{
             Method: "GetAll",
-            Router: "/",
+            Router: "/thread/",
             AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,
@@ -28,7 +28,7 @@ func init() {
     beego.GlobalControllerRouter["beego_study/controllers:ThreadController"] = append(beego.GlobalControllerRouter["beego_study/controllers:ThreadController"],
         beego.ControllerComments{
             Method: "GetOne",
-            Router: "/:id",
+            Router: "/thread/:id",
             AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,
@@ -37,7 +37,7 @@ func init() {
     beego.GlobalControllerRouter["beego_study/controllers:ThreadController"] = append(beego.GlobalControllerRouter["beego_study/controllers:ThreadController"],
         beego.ControllerComments{
             Method: "Put",
-            Router: "/:id",
+            Router: "/thread/:id",
             AllowHTTPMethods: []string{"put"},
             MethodParams: param.Make(),
             Filters: nil,
@@ -46,7 +46,52 @@ func init() {
     beego.GlobalControllerRouter["beego_study/controllers:ThreadController"] = append(beego.GlobalControllerRouter["beego_study/controllers:ThreadController"],
         beego.ControllerComments{
             Method: "Delete",
-            Router: "/:id",
+            Router: "/thread/:id",
+            AllowHTTPMethods: []string{"delete"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["beego_study/controllers:Thread_logController"] = append(beego.GlobalControllerRouter["beego_study/controllers:Thread_logController"],
+        beego.ControllerComments{
+            Method: "Post",
+            Router: "/thread_log/",
+            AllowHTTPMethods: []string{"post"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["beego_study/controllers:Thread_logController"] = append(beego.GlobalControllerRouter["beego_study/controllers:Thread_logController"],
+        beego.ControllerComments{
+            Method: "GetAll",
+            Router: "/thread_log/",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["beego_study/controllers:Thread_logController"] = append(beego.GlobalControllerRouter["beego_study/controllers:Thread_logController"],
+        beego.ControllerComments{
+            Method: "GetOne",
+            Router: "/thread_log/:id",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["beego_study/controllers:Thread_logController"] = append(beego.GlobalControllerRouter["beego_study/controllers:Thread_logController"],
+        beego.ControllerComments{
+            Method: "Put",
+            Router: "/thread_log/:id",
+            AllowHTTPMethods: []string{"put"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["beego_study/controllers:Thread_logController"] = append(beego.GlobalControllerRouter["beego_study/controllers:Thread_logController"],
+        beego.ControllerComments{
+            Method: "Delete",
+            Router: "/thread_log/:id",
             AllowHTTPMethods: []string{"delete"},
             MethodParams: param.Make(),
             Filters: nil,

@@ -16,6 +16,7 @@ func (c *MainController) Get() {
 	c.TplName = "index.tpl"
 	c.ViewPath = "views"
 }
+
 func (c *MainController) Test() {
 	c.EnableRender = false
 	fmt.Println(c.GetString("hello"))

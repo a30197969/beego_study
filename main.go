@@ -7,7 +7,12 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func main() {
+func init() {
+	orm.RegisterDriver("mysql", orm.DRMySQL)
 	orm.RegisterDataBase("default", "mysql", "fengniao:fengniao123@tcp(172.16.151.61:3306)/forum?charset=utf8mb4&parseTime=true&loc=Local")
+	orm.RegisterDataBase("test", "mysql", "fengniao:fengniao123@tcp(172.16.151.61:3306)/test?charset=utf8mb4&parseTime=true&loc=Local")
+}
+
+func main() {
 	beego.Run()
 }

@@ -10,8 +10,8 @@ import (
 )
 
 type Thread struct {
-	Threadid     int64  `orm:"auto"`
-	Title        string `orm:"size(128)"`
+	Threadid     int64  `orm:"pk;auto"`
+	Title        string `orm:"size(250);column(title)"` // 设置varchar长度为250 列名为title
 	Firstpostid  int
 	Lastpost     int
 	Forumid      int
@@ -56,16 +56,21 @@ func AddThread(m *Thread) (id int64, err error) {
 	return
 }
 
-// GetThreadById retrieves Thread by Threadid. Returns error if
-// Threadid doesn't exist
-func GetThreadById(threadid int64) (v *Thread, err error) {
+// GetThreadById retrieves Thread by Id. Returns error if
+// Id doesn't exist
+func GetThreadById(id int64) (v *Thread, err error) {
 	o := orm.NewOrm()
-	v = &Thread{Threadid: threadid}
+	v = &Thread{Threadid: id}
+	err = o.Raw("select * from thread where threadid=? limit 1", id).QueryRow(v)
+	if err != nil {
+		return nil, err
+	}
+	return v, nil
 
-	if err = o.QueryTable(new(Thread)).Filter("Threadid", threadid).RelatedSel().One(v); err == nil {
+	/*if err = o.QueryTable(new(Thread)).Filter("threadid", id).RelatedSel().One(v); err == nil {
 		return v, nil
 	}
-	return nil, err
+	return nil, err*/
 }
 
 // GetAllThread retrieves all Thread matches certain condition. Returns empty list if
@@ -142,12 +147,12 @@ func GetAllThread(query map[string]string, fields []string, sortby []string, ord
 	return nil, err
 }
 
-// UpdateThread updates Thread by Threadid and returns error if
+// UpdateThread updates Thread by Id and returns error if
 // the record to be updated doesn't exist
 func UpdateThreadById(m *Thread) (err error) {
 	o := orm.NewOrm()
 	v := Thread{Threadid: m.Threadid}
-	// ascertain Threadid exists in the database
+	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
 		if num, err = o.Update(m); err == nil {
@@ -157,15 +162,15 @@ func UpdateThreadById(m *Thread) (err error) {
 	return
 }
 
-// DeleteThread deletes Thread by Threadid and returns error if
+// DeleteThread deletes Thread by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteThread(threadid int64) (err error) {
+func DeleteThread(id int64) (err error) {
 	o := orm.NewOrm()
-	v := Thread{Threadid: threadid}
-	// ascertain Threadid exists in the database
+	v := Thread{Threadid: id}
+	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Delete(&Thread{Threadid: threadid}); err == nil {
+		if num, err = o.Delete(&Thread{Threadid: id}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}

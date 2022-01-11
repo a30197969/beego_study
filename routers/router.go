@@ -7,9 +7,12 @@ import (
 
 func init() {
 	// 路由配置 https://www.jianshu.com/p/417fcc5841f8
-	//beego.Router("/", &controllers.MainController{})
-	//beego.Router("/test", &controllers.MainController{}, "*:Test")
+	beego.Router("/", &controllers.MainController{})
+	beego.Router("/test", &controllers.MainController{}, "*:Test")
+
+	beego.Router("/subject", &controllers.SubjectController{})
 
 	beego.Include(&controllers.ThreadController{})
+	beego.Include(&controllers.Thread_logController{})
 
 }
