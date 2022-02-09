@@ -18,6 +18,19 @@ func (c *MainController) Get() {
 }
 
 func (c *MainController) Test() {
+
+	// 打印路由参数
+	id := c.Ctx.Input.Param(":id")
+	fmt.Println(id)
+
+	c.Ctx.WriteString("hello")
+	bbuserid := c.Ctx.GetCookie("bbuserid")
+	fmt.Println(bbuserid)
+
+	user, _ := beego.AppConfig.String("mysqluser")
+	fmt.Println(user)
+
+
 	c.EnableRender = false
 	fmt.Println(c.GetString("hello"))
 	fmt.Println(c.Ctx.Request.RequestURI)
@@ -27,7 +40,7 @@ func (c *MainController) Test() {
 	cName, cAction := c.Controller.GetControllerAndAction()
 	// 当你设置了自动渲染，然后在你的 Controller 中没有设置任何的 TplName，那么 beego 会自动设置你的模板文件如下：
 	// 也就是你对应的 Controller 名字+请求方法名.模板后缀，也就是如果你的 Controller 名是 AddController
-	// 请求方法是 POST，默认的文件后缀是 tpl，那么就会默认请求 /viewpath/AddController/post.tpl 文件
+	// 请求方法是 POST，默认的文件后缀是 tpl，那么就会默认请求 /viewpath/addcontroller/post.tpl 文件
 	tplName := strings.ToLower(cName) + "/" + strings.ToLower(cAction) + "." + c.TplExt
 	fmt.Println(cName, cAction, tplName)
 }

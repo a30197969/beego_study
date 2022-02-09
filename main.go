@@ -14,5 +14,7 @@ func init() {
 }
 
 func main() {
+	// 静态文件处理
+	beego.SetStaticPath("/js", "static/js")
 	beego.Run()
 }
