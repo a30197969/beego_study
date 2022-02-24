@@ -9,8 +9,10 @@ import (
 
 func init() {
 	orm.RegisterDriver("mysql", orm.DRMySQL)
+	// 注册一个别名为 default、test 的数据库
 	orm.RegisterDataBase("default", "mysql", "fengniao:fengniao123@tcp(172.16.151.61:3306)/forum?charset=utf8mb4&parseTime=true&loc=Local")
 	orm.RegisterDataBase("test", "mysql", "fengniao:fengniao123@tcp(172.16.151.61:3306)/test?charset=utf8mb4&parseTime=true&loc=Local")
+	// orm.RunSyncdb("test", false, true) // 第二个参数是否强制更新，第三个参数创建表的过程是否可见
 }
 
 func main() {

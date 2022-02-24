@@ -16,6 +16,7 @@ type Subject struct {
 }
 
 func init() {
+	// 映射model数据
 	orm.RegisterModel(new(Subject))
 }
 func GetSubject(id int) (s Subject, err error) {

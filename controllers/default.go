@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"beego_study/models"
 	"fmt"
 	beego "github.com/beego/beego/v2/server/web"
+	"strconv"
 	"strings"
 )
 
@@ -17,8 +19,31 @@ func (c *MainController) Get() {
 	c.ViewPath = "views"
 }
 
-func (c *MainController) Test() {
+// Register 注册页面
+func (c *MainController) Register() {
+	c.Data["name"] = "fengniao.com"
+	c.TplName = "register.tpl"
+}
 
+// RegisterPost 提交注册
+func (c *MainController) RegisterPost() {
+	// 获取POST数据
+	name := c.GetString("name")
+	password := c.GetString("password")
+	repassword := c.GetString("repassword")
+	if password != repassword {
+		c.Ctx.WriteString("密码不一致")
+	}
+	id, err := models.InsertUser(name, password)
+	if err != nil {
+		c.Ctx.WriteString("注册用户失败")
+	}
+	c.Data["message"] = "注册成功，ID：" + strconv.FormatInt(id, 10)
+	c.TplName = "register.tpl"
+
+}
+
+func (c *MainController) Test() {
 	// 打印路由参数
 	id := c.Ctx.Input.Param(":id")
 	fmt.Println(id)
@@ -29,7 +54,6 @@ func (c *MainController) Test() {
 
 	user, _ := beego.AppConfig.String("mysqluser")
 	fmt.Println(user)
-
 
 	c.EnableRender = false
 	fmt.Println(c.GetString("hello"))
