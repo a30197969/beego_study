@@ -5,10 +5,11 @@ import (
 	"time"
 )
 
+// 表的设计
 type User struct {
 	Id       int64     `orm:"auto"`
 	Name     string    `orm:"size(50)"`
-	Password string    `orm:"size(20)"`
+	Password string    `orm:"size(32)"`
 	RegTime  time.Time `orm:"auto_now_add;type(datetime)"`
 }
 
@@ -27,4 +28,29 @@ func InsertUser(name string, password string) (id int64, err error) {
 	o := orm.NewOrmUsingDB("test")
 	id, err = o.Insert(u)
 	return
+}
+func SelectUserList() []*User {
+	o := orm.NewOrmUsingDB("test")
+	qs := o.QueryTable(&User{})
+	qs.Filter("name", "123")
+	var users []*User
+	num, err := qs.All(users)
+	println(num, err)
+	return users
+}
+
+// 根据主键ID查询
+func SelectUser(id int64) (u User, err error) {
+	o := orm.NewOrmUsingDB("test")
+	u = User{}
+	u.Id = id
+	err = o.Read(&u)
+	if err == orm.ErrNoRows {
+		return u, nil
+	} else if err == orm.ErrMissPK {
+		return u, nil
+	} else {
+		return u, err
+	}
+	return u, nil
 }
