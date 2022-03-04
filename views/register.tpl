@@ -15,7 +15,7 @@
         <label>重复密码：<input type="password" name="repassword" placeholder="请再次输入您的密码" value=""/></label>
         <br/><br/>
         <input type="submit" value="注册">
-        <span>{{.message}}</span>
+        <span style="font-size: 12px;color: red;">{{.message}}</span>
     </form>
 </div>
 </body>
