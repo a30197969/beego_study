@@ -10,7 +10,7 @@ type Article struct {
 	Title       string `orm:"size(100)"`
 	Content     string `orm:"type(text);null"`
 	Pv          uint
-	QiniuBucket string    `orm:"size(50)"`
+	QiniuBucket string    `orm:"size(100)"`
 	QiniuKey    string    `orm:"size(255)"`
 	Author      string    `orm:"size(50)"`
 	AddTime     time.Time `orm:"auto_now_add;type(datetime);index"`

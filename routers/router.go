@@ -27,6 +27,7 @@ func init() {
 	beego.Router("/login", &controllers.LoginController{})
 
 	beego.Router("/article", &controllers.ArticleController{})
+	beego.Router("/article_list", &controllers.ArticleController{}, "*:ArticleList")
 
 	beego.Include(&controllers.ThreadController{})
 	beego.Include(&controllers.Thread_logController{})
