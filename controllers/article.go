@@ -91,5 +91,59 @@ func (c *ArticleController) ArticleList() {
 		return
 	}
 	logs.Info(num, articles)
-	c.Data["list"] = articles
+	c.Data["articles"] = articles
+}
+
+// ArticleInfo 文章详情页
+func (c *ArticleController) ArticleInfo() {
+	c.TplName = "article_info.tpl"
+	paramId := c.Ctx.Input.Param(":id")
+	id, err := strconv.ParseUint(paramId, 10, 64)
+	if err != nil {
+		c.Redirect("/article_list", 302)
+		return
+	}
+	// ID非法
+	if id < 1 {
+		c.Redirect("/article_list", 302)
+		return
+	}
+	o := orm.NewOrmUsingDB("test")
+	a := &models.Article{
+		Id: id,
+	}
+	err = o.Read(a)
+	if err == orm.ErrNoRows {
+		c.Redirect("/article_list", 200)
+		return
+	} else if err != nil {
+		c.Redirect("/article_list", 200)
+		return
+	}
+	logs.Info(a)
+	c.Data["article"] = a
+}
+
+// ArticleUpdate 文章内容编辑
+func (c *ArticleController) ArticleUpdate() {
+	c.TplName = "article_info.tpl"
+	tmpId := c.GetString("id")
+	id, _ := strconv.ParseUint(tmpId, 10, 64)
+	title := c.GetString("title")
+	content := c.GetString("content")
+	author := c.GetString("author")
+	logs.Info(id, title, content, author)
+	o := orm.NewOrmUsingDB("test")
+	a := &models.Article{
+		Id: id,
+	}
+	a.Title = title
+	a.Content = content
+	a.Author = author
+	a.UpdateTime = time.Now()
+	num, err := o.Update(a, "Title", "Content", "Author", "UpdateTime")
+	logs.Info(num, err)
+	c.Data["message"] = "更新成功"
+	err = o.Read(a)
+	c.Data["article"] = a
 }

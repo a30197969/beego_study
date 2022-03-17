@@ -74,30 +74,26 @@
         }
     </style>
 </head>
+
 <body>
 <header>
-    <h3 class="logo">文章列表</h3>
+    <h3 class="logo">添加文章</h3>
     <div class="description">
-        <table>
-            <tr>
-                <td width="5%">ID</td>
-                <td width="15%">标题</td>
-                <td width="20%">内容</td>
-                <td width="10%">作者</td>
-                <td width="15%">添加时间</td>
-                <td width="15%">修改时间</td>
-            </tr>
-            {{range .articles}}
-            <tr>
-                <td>{{.Id}}</td>
-                <td><a href="./article_{{.Id}}" target="_blank">{{.Title}}</a></td>
-                <td>{{.Content}}</td>
-                <td>{{.Author}}</td>
-                <td>{{.AddTime.Format "2006-01-02 15:04:05"}}</td>
-                <td>{{.UpdateTime.Format "2006-01-02 15:04:05"}}</td>
-            </tr>
-            {{end}}
-        </table>
+        <form action="./article_update" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="id" value="{{.article.Id}}">
+            <label>标题：<input style="width: 300px" type="text" name="title" placeholder=""
+                             value="{{.article.Title}}"/></label>
+            <br/><br/>
+            <label>内容：<textarea rows="10" cols="100" name="content">{{.article.Content}}</textarea></label>
+            <br/><br/>
+            <input type="file" name="pic">
+            <img width="400px;" src="/static/img/{{.article.QiniuKey}}"/>
+            <br/><br/>
+            <label>作者：<input style="width: 300px" type="text" name="author" placeholder="" value="{{.article.Author}}"/></label>
+            <br/><br/>
+            <input type="submit" value="修改">
+            <span>{{.message}}</span>
+        </form>
     </div>
 </header>
 <div class="backdrop"></div>
