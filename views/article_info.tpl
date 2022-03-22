@@ -77,7 +77,7 @@
 
 <body>
 <header>
-    <h3 class="logo">添加文章</h3>
+    <h3 class="logo">编辑文章</h3>
     <div class="description">
         <form action="./article_update" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id" value="{{.article.Id}}">
