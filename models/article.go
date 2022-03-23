@@ -20,6 +20,5 @@ type Article struct {
 func init() {
 	// 将你定义的 Model 进行注册
 	orm.RegisterModel(new(Article))
-
 	//orm.NewOrmUsingDB("test")
 }

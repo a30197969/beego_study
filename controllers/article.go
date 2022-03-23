@@ -5,6 +5,7 @@ import (
 	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/core/logs"
 	beego "github.com/beego/beego/v2/server/web"
+	"math"
 	"os"
 	"path"
 	"strconv"
@@ -82,16 +83,24 @@ func (c *ArticleController) Post() {
 
 // ArticleList 文章列表页
 func (c *ArticleController) ArticleList() {
+	msg := c.GetString("msg")
 	c.TplName = "article_list.tpl"
 	o := orm.NewOrmUsingDB("test")
 	var articles []models.Article
-	num, err := o.QueryTable(models.Article{}).All(&articles)
+	qs := o.QueryTable(models.Article{})
+	_, err := qs.All(&articles)
+	// 查询总数
+	count, err := qs.Count()
 	if err != nil {
 		logs.Info(err)
 		return
 	}
-	logs.Info(num, articles)
+	var pageSize int64 = 3
+	pageCount := math.Ceil(float64(count) / float64(pageSize))
 	c.Data["articles"] = articles
+	c.Data["message"] = msg
+	c.Data["count"] = count
+	c.Data["pageCount"] = pageCount
 }
 
 // ArticleInfo 文章详情页
@@ -114,10 +123,10 @@ func (c *ArticleController) ArticleInfo() {
 	}
 	err = o.Read(a)
 	if err == orm.ErrNoRows {
-		c.Redirect("/article_list", 200)
+		c.Redirect("/article_list", 302)
 		return
 	} else if err != nil {
-		c.Redirect("/article_list", 200)
+		c.Redirect("/article_list", 302)
 		return
 	}
 	logs.Info(a)
@@ -126,7 +135,6 @@ func (c *ArticleController) ArticleInfo() {
 
 // ArticleUpdate 文章内容编辑
 func (c *ArticleController) ArticleUpdate() {
-	c.TplName = "article_info.tpl"
 	tmpId := c.GetString("id")
 	id, _ := strconv.ParseUint(tmpId, 10, 64)
 	title := c.GetString("title")
@@ -143,7 +151,30 @@ func (c *ArticleController) ArticleUpdate() {
 	a.UpdateTime = time.Now()
 	num, err := o.Update(a, "Title", "Content", "Author", "UpdateTime")
 	logs.Info(num, err)
-	c.Data["message"] = "更新成功"
-	err = o.Read(a)
-	c.Data["article"] = a
+	//c.Data["message"] = "更新成功"
+	//err = o.Read(a)
+	//c.Data["article"] = a
+	c.Redirect("/article_"+tmpId, 302)
+	return
+}
+func (c *ArticleController) ArticleDelete() {
+	paramId := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseUint(paramId, 10, 64)
+	o := orm.NewOrmUsingDB("test")
+	a := &models.Article{
+		Id: id,
+	}
+	err := o.Read(a)
+	if err != nil {
+		c.Redirect("/article_list?当前ID不存在", 302)
+		return
+	}
+	num, err := o.Delete(a)
+	logs.Info(num)
+	if err != nil {
+		c.Redirect("/article_list?msg=删除失败", 302)
+		return
+	}
+	c.Redirect("/article_list?msg=删除成功", 302)
+	return
 }

@@ -36,14 +36,10 @@
             background-size: 100px 100px;
             background-position: center center;
             text-align: center;
-            font-size: 42px;
-            padding: 250px 0 70px;
+            font-size: 24px;
+            padding: 250px 0 30px;
             font-weight: normal;
             text-shadow: 0px 1px 2px #ddd;
-        }
-
-        header {
-            padding: 100px 0;
         }
 
         footer {
@@ -72,20 +68,27 @@
             top: 0px;
             left: 0px;
         }
+
+        .description td {
+            height: 35px;
+            border: #CCCCCC 1px solid;
+        }
     </style>
+    <script src="/static/js/jquery-1.9.1.min.js"></script>
 </head>
 <body>
 <header>
     <h3 class="logo">文章列表</h3>
     <div class="description">
+        <div style="margin-bottom: 20px;"><span style="color: red;">{{.message}}</span></div>
         <table>
             <tr>
                 <td width="5%">ID</td>
                 <td width="15%">标题</td>
                 <td width="20%">内容</td>
                 <td width="10%">作者</td>
-                <td width="15%">添加时间</td>
                 <td width="15%">修改时间</td>
+                <td width="15%">操作</td>
             </tr>
             {{range .articles}}
             <tr>
@@ -93,14 +96,21 @@
                 <td><a href="./article_{{.Id}}" target="_blank">{{.Title}}</a></td>
                 <td>{{.Content}}</td>
                 <td>{{.Author}}</td>
-                <td>{{.AddTime.Format "2006-01-02 15:04:05"}}</td>
                 <td>{{.UpdateTime.Format "2006-01-02 15:04:05"}}</td>
+                <td><a style="color: blue;" href="/article_delete_{{.Id}}" class="dels">删除</a></td>
             </tr>
             {{end}}
         </table>
+        <div style="margin-top: 20px;"><span>共 {{.count}} 条数据，{{.pageCount}} 页</span></div>
     </div>
 </header>
 <div class="backdrop"></div>
-<script src="/static/js/reload.min.js"></script>
+<script>
+    $(".dels").click(function () {
+        if (!confirm("是否确认删除")) {
+            return false
+        }
+    })
+</script>
 </body>
 </html>

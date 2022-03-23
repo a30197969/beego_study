@@ -30,6 +30,7 @@ func init() {
 	beego.Router("/article_list", &controllers.ArticleController{}, "*:ArticleList")
 	beego.Router("/article_update", &controllers.ArticleController{}, "*:ArticleUpdate")
 	beego.Router("/article_:id([0-9]+)", &controllers.ArticleController{}, "*:ArticleInfo")
+	beego.Router("/article_delete_:id([0-9]+)", &controllers.ArticleController{}, "*:ArticleDelete")
 
 	beego.Include(&controllers.ThreadController{})
 	beego.Include(&controllers.Thread_logController{})

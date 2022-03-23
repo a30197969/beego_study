@@ -36,8 +36,8 @@
             background-size: 100px 100px;
             background-position: center center;
             text-align: center;
-            font-size: 42px;
-            padding: 250px 0 70px;
+            font-size: 24px;
+            padding: 250px 0 30px;
             font-weight: normal;
             text-shadow: 0px 1px 2px #ddd;
         }
