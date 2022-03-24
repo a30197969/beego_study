@@ -84,18 +84,23 @@ func (c *ArticleController) Post() {
 // ArticleList 文章列表页
 func (c *ArticleController) ArticleList() {
 	msg := c.GetString("msg")
+	tmpPage := c.GetString("page", "1")
+	page, _ := strconv.Atoi(tmpPage)
+	pageSize := 3
+	start := pageSize*page - 1
 	c.TplName = "article_list.tpl"
 	o := orm.NewOrmUsingDB("test")
 	var articles []models.Article
 	qs := o.QueryTable(models.Article{})
-	_, err := qs.All(&articles)
 	// 查询总数
 	count, err := qs.Count()
 	if err != nil {
 		logs.Info(err)
 		return
 	}
-	var pageSize int64 = 3
+	qs.Limit(pageSize, start)
+	num, err := qs.All(&articles)
+	logs.Info(count, num)
 	pageCount := math.Ceil(float64(count) / float64(pageSize))
 	c.Data["articles"] = articles
 	c.Data["message"] = msg
