@@ -82,6 +82,12 @@
         <form action="./article" method="post" enctype="multipart/form-data">
             <label>标题：<input style="width: 300px" type="text" name="title" placeholder="" value=""/></label>
             <br/><br/>
+            <label>频道：<select name="article_type">
+                {{range .articleTypes}}
+                <option value="{{.Id}}">{{.Name}}</option>
+                {{end}}
+            </select></label>
+            <br/><br/>
             <label>内容：<textarea rows="10" cols="100" name="content"></textarea></label>
             <br/><br/>
             <input type="file" name="pic">

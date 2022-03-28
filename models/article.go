@@ -6,9 +6,10 @@ import (
 )
 
 type Article struct {
-	Id          uint64 `orm:"auto"`
-	Title       string `orm:"size(100)"`
-	Content     string `orm:"type(text);null"`
+	Id          uint64       `orm:"auto"`
+	Title       string       `orm:"size(100)"`
+	Content     string       `orm:"type(text);null"`
+	ArticleType *ArticleType `orm:"rel(fk)"` // 设置外键
 	Pv          uint
 	QiniuBucket string    `orm:"size(100)"`
 	QiniuKey    string    `orm:"size(255)"`

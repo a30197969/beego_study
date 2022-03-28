@@ -73,6 +73,11 @@
             height: 35px;
             border: #CCCCCC 1px solid;
         }
+
+        .page li {
+            margin-right: 5px;
+            display: inline;
+        }
     </style>
     <script src="/static/js/jquery-1.9.1.min.js"></script>
 </head>
@@ -93,7 +98,7 @@
             {{range .articles}}
             <tr>
                 <td>{{.Id}}</td>
-                <td><a href="./article_{{.Id}}" target="_blank">{{.Title}}</a></td>
+                <td><a href="./article_{{.Id}}">{{.Title}}</a></td>
                 <td>{{.Content}}</td>
                 <td>{{.Author}}</td>
                 <td>{{.UpdateTime.Format "2006-01-02 15:04:05"}}</td>
@@ -101,7 +106,22 @@
             </tr>
             {{end}}
         </table>
-        <div style="margin-top: 20px;"><span>共 {{.count}} 条数据，{{.pageCount}} 页</span></div>
+        <div style="margin-top: 20px;">
+            <ul class="page">
+                {{if compare .page 1}}
+                {{else}}
+                <li><a href="/article_list?page=1">首页</a></li>
+                <li><a href="/article_list?page={{.page | ShowPrePage}}">上一页</a></li>
+                {{end}}
+                {{if compare .page .pageCount}}
+                {{else}}
+                <li><a href="/article_list?page={{.nextPage}}">下一页</a></li>
+                <li><a href="/article_list?page={{.pageCount}}">尾页</a></li>
+                {{end}}
+                <li><span>{{.count}} 条数据，共 {{.pageCount}} 页</span></li>
+            </ul>
+
+        </div>
     </div>
 </header>
 <div class="backdrop"></div>

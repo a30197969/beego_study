@@ -18,12 +18,18 @@ type ArticleController struct {
 }
 
 func (c *ArticleController) Get() {
+	o := orm.NewOrmUsingDB("test")
+	var articleTypes []models.ArticleType
+	o.QueryTable(models.ArticleType{}).All(&articleTypes)
+	c.Data["articleTypes"] = articleTypes
 	c.TplName = "article.tpl"
 }
 
 func (c *ArticleController) Post() {
 	c.TplName = "article.tpl"
 	title := c.GetString("title")
+	tmpArticleTypeId := c.GetString("article_type")
+	articleTypeId, err := strconv.ParseUint(tmpArticleTypeId, 10, 64)
 	content := c.GetString("content")
 	author := c.GetString("author")
 	// 获取图片
@@ -58,7 +64,7 @@ func (c *ArticleController) Post() {
 		c.Data["message"] = "移动图片失败"
 		return
 	}
-	logs.Info(title, content, author, fh.Size, fh.Filename, fh.Header, newName)
+	logs.Info(title, articleTypeId, content, author, fh.Size, fh.Filename, fh.Header, newName)
 	c.TplName = "article.tpl"
 	if title == "" || content == "" || author == "" {
 		c.Data["message"] = "有字段为空"
@@ -68,6 +74,16 @@ func (c *ArticleController) Post() {
 	a := &models.Article{}
 	a.Title = title
 	a.Content = content
+	// 查询频道对象
+	at := &models.ArticleType{
+		Id: articleTypeId,
+	}
+	err = o.Read(at)
+	if err != nil {
+		c.Data["message"] = "获取频道错误"
+		return
+	}
+	a.ArticleType = at // 这里很重要
 	a.Author = author
 	a.AddTime = time.Now()
 	a.QiniuBucket = fileDir
@@ -78,6 +94,8 @@ func (c *ArticleController) Post() {
 		c.Data["message"] = "插入数据库错误"
 		return
 	}
+	c.Redirect("/article", 302)
+	return
 	c.Data["message"] = "写入文章成功，ID：" + strconv.FormatInt(id, 10)
 }
 
@@ -87,7 +105,7 @@ func (c *ArticleController) ArticleList() {
 	tmpPage := c.GetString("page", "1")
 	page, _ := strconv.Atoi(tmpPage)
 	pageSize := 3
-	start := pageSize*page - 1
+	start := (page - 1) * pageSize
 	c.TplName = "article_list.tpl"
 	o := orm.NewOrmUsingDB("test")
 	var articles []models.Article
@@ -98,14 +116,24 @@ func (c *ArticleController) ArticleList() {
 		logs.Info(err)
 		return
 	}
-	qs.Limit(pageSize, start)
-	num, err := qs.All(&articles)
-	logs.Info(count, num)
+	// 当前页数据
+	num, err := qs.Limit(pageSize, start).OrderBy("-id").All(&articles)
+	logs.Info(tmpPage, count, num)
+	// 页数
 	pageCount := math.Ceil(float64(count) / float64(pageSize))
+	// 上下页处理
+	nextPage := float64(page + 1)
+	if nextPage > pageCount {
+		nextPage = pageCount
+	}
+
 	c.Data["articles"] = articles
 	c.Data["message"] = msg
 	c.Data["count"] = count
 	c.Data["pageCount"] = pageCount
+	c.Data["page"] = page
+	c.Data["nextPage"] = nextPage
+
 }
 
 // ArticleInfo 文章详情页
@@ -159,7 +187,7 @@ func (c *ArticleController) ArticleUpdate() {
 	//c.Data["message"] = "更新成功"
 	//err = o.Read(a)
 	//c.Data["article"] = a
-	c.Redirect("/article_"+tmpId, 302)
+	c.Redirect("/article_list", 302)
 	return
 }
 func (c *ArticleController) ArticleDelete() {

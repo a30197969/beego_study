@@ -18,5 +18,16 @@ func init() {
 func main() {
 	// 静态文件处理
 	beego.SetStaticPath("/js", "static/js")
+	// 视图函数映射
+	beego.AddFuncMap("ShowPrePage", HandlePrePage)
 	beego.Run()
+}
+
+// HandlePrePage 上一页界限处理
+func HandlePrePage(page int) int {
+	prePage := page - 1
+	if prePage < 1 {
+		prePage = 1
+	}
+	return prePage
 }
