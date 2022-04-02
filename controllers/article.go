@@ -74,7 +74,7 @@ func (c *ArticleController) Post() {
 	a := &models.Article{}
 	a.Title = title
 	a.Content = content
-	// 查询频道对象
+	// 查询频道对象，下拉框的处理
 	at := &models.ArticleType{
 		Id: articleTypeId,
 	}
@@ -103,37 +103,54 @@ func (c *ArticleController) Post() {
 func (c *ArticleController) ArticleList() {
 	msg := c.GetString("msg")
 	tmpPage := c.GetString("page", "1")
+	tmpType := c.GetString("type") // 频道ID
 	page, _ := strconv.Atoi(tmpPage)
+	articleTypeId, _ := strconv.Atoi(tmpType)
 	pageSize := 3
-	start := (page - 1) * pageSize
 	c.TplName = "article_list.tpl"
 	o := orm.NewOrmUsingDB("test")
-	var articles []models.Article
-	qs := o.QueryTable(models.Article{})
+	// 获取频道列表
+	var articleTypes []models.ArticleType
+	articleTypesCount, err := o.QueryTable(models.ArticleType{}).All(&articleTypes)
 	// 查询总数
+	var articles []models.Article
+	qs := o.QueryTable(models.Article{}).RelatedSel("ArticleType")
+	if articleTypeId > 0 {
+		qs = qs.Filter("ArticleType__Id", articleTypeId)
+	}
 	count, err := qs.Count()
 	if err != nil {
 		logs.Info(err)
 		return
 	}
-	// 当前页数据
-	num, err := qs.Limit(pageSize, start).OrderBy("-id").All(&articles)
-	logs.Info(tmpPage, count, num)
 	// 页数
-	pageCount := math.Ceil(float64(count) / float64(pageSize))
+	tmpPageCount := math.Ceil(float64(count) / float64(pageSize))
+	pageCount := int(tmpPageCount)
 	// 上下页处理
-	nextPage := float64(page + 1)
+	if page > pageCount {
+		page = pageCount
+	}
+	nextPage := page + 1
 	if nextPage > pageCount {
 		nextPage = pageCount
 	}
-
+	// 当前页数据
+	start := (page - 1) * pageSize
+	num, err := qs.Limit(pageSize, start).OrderBy("-id").All(&articles) // 关联表
+	if err != nil {
+		logs.Info(err)
+		return
+	}
+	logs.Info(articleTypesCount, count, num, pageCount)
+	logs.Info(articles)
+	c.Data["articleTypes"] = articleTypes
+	c.Data["type"] = articleTypeId
 	c.Data["articles"] = articles
 	c.Data["message"] = msg
 	c.Data["count"] = count
 	c.Data["pageCount"] = pageCount
 	c.Data["page"] = page
 	c.Data["nextPage"] = nextPage
-
 }
 
 // ArticleInfo 文章详情页

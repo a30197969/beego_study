@@ -85,43 +85,55 @@
 <header>
     <h3 class="logo">文章列表</h3>
     <div class="description">
-        <div style="margin-bottom: 20px;"><span style="color: red;">{{.message}}</span></div>
-        <table>
-            <tr>
-                <td width="5%">ID</td>
-                <td width="15%">标题</td>
-                <td width="20%">内容</td>
-                <td width="10%">作者</td>
-                <td width="15%">修改时间</td>
-                <td width="15%">操作</td>
-            </tr>
-            {{range .articles}}
-            <tr>
-                <td>{{.Id}}</td>
-                <td><a href="./article_{{.Id}}">{{.Title}}</a></td>
-                <td>{{.Content}}</td>
-                <td>{{.Author}}</td>
-                <td>{{.UpdateTime.Format "2006-01-02 15:04:05"}}</td>
-                <td><a style="color: blue;" href="/article_delete_{{.Id}}" class="dels">删除</a></td>
-            </tr>
-            {{end}}
-        </table>
-        <div style="margin-top: 20px;">
-            <ul class="page">
-                {{if compare .page 1}}
-                {{else}}
-                <li><a href="/article_list?page=1">首页</a></li>
-                <li><a href="/article_list?page={{.page | ShowPrePage}}">上一页</a></li>
+        <form action="./article_list" method="get">
+            <div style="margin-bottom: 20px;"><span style="color: red;">{{.message}}</span></div>
+            <div style="margin-bottom: 20px;">
+                <input name="page" value="{{.page}}" type="hidden">
+                <select name="type" onchange="submit()">
+                    <option value="0">请选择</option>
+                    {{range $i,$v := .articleTypes}}
+                    <option value="{{$v.Id}}">{{$v.Name}}</option>
+                    {{end}}
+                </select>
+            </div>
+            <table>
+                <tr>
+                    <td width="5%">ID</td>
+                    <td width="15%">标题</td>
+                    <td width="15%">频道</td>
+                    <td width="20%">内容</td>
+                    <td width="10%">作者</td>
+                    <td width="15%">修改时间</td>
+                    <td width="15%">操作</td>
+                </tr>
+                {{range $index,$val:=.articles}}
+                <tr>
+                    <td>{{.Id}}</td>
+                    <td><a href="./article_{{$val.Id}}">{{$val.Title}}</a></td>
+                    <td>{{$val.ArticleType.Name}}</td>
+                    <td>{{$val.Content}}</td>
+                    <td>{{$val.Author}}</td>
+                    <td>{{$val.UpdateTime.Format "2006-01-02 15:04:05"}}</td>
+                    <td><a style="color: blue;" href="/article_delete_{{$val.Id}}" class="dels">删除</a></td>
+                </tr>
                 {{end}}
-                {{if compare .page .pageCount}}
-                {{else}}
-                <li><a href="/article_list?page={{.nextPage}}">下一页</a></li>
-                <li><a href="/article_list?page={{.pageCount}}">尾页</a></li>
-                {{end}}
-                <li><span>{{.count}} 条数据，共 {{.pageCount}} 页</span></li>
-            </ul>
-
-        </div>
+            </table>
+            <div style="margin-top: 20px;">
+                <ul class="page">
+                    {{if compare .page 1}}
+                    {{else}}
+                    <li><a href="/article_list?page=1">首页</a></li>
+                    <li><a href="/article_list?page={{.page | ShowPrePage}}">上一页</a></li>
+                    {{end}}
+                    {{if compare .page .pageCount}}
+                    {{else}}
+                    <li><a href="/article_list?page={{.nextPage}}">下一页</a></li>
+                    <li><a href="/article_list?page={{.pageCount}}">尾页</a></li>
+                    {{end}}
+                    <li><span>{{.count}} 条数据，共 {{.pageCount}} 页</span></li>
+                </ul>
+            </div>
+        </form>
     </div>
 </header>
 <div class="backdrop"></div>
