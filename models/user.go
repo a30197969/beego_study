@@ -8,10 +8,11 @@ import (
 
 // User 表的设计
 type User struct {
-	Id       int64     `orm:"auto"`
-	Name     string    `orm:"size(50);unique"`
-	Password string    `orm:"size(32)"`
-	RegTime  time.Time `orm:"auto_now_add;type(datetime)"`
+	Id       int64      `orm:"auto"`
+	Name     string     `orm:"size(50);unique"`
+	Password string     `orm:"size(32)"`
+	RegTime  time.Time  `orm:"auto_now_add;type(datetime)"`
+	Articles []*Article `orm:"reverse(many)"`
 }
 
 func init() {

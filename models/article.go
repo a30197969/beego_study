@@ -11,6 +11,7 @@ type Article struct {
 	Content     string       `orm:"type(text);null"`
 	ArticleType *ArticleType `orm:"rel(fk)"` // 设置外键
 	Pv          uint
+	Users       []*User   `orm:"rel(m2m)"` // 多对多关系
 	QiniuBucket string    `orm:"size(100)"`
 	QiniuKey    string    `orm:"size(255)"`
 	Author      string    `orm:"size(50)"`

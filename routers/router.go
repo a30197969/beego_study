@@ -3,9 +3,21 @@ package routers
 import (
 	"beego_study/controllers"
 	beego "github.com/beego/beego/v2/server/web"
+	"github.com/beego/beego/v2/server/web/context"
 )
 
+var FilterUser = func(ctx *context.Context) {
+	_, ok := ctx.Input.Session("beego_uid").(int)
+	if !ok && ctx.Request.RequestURI != "/login" && ctx.Request.RequestURI != "/register" {
+		ctx.Redirect(302, "/login")
+	}
+	//logs.Info("session : " + strconv.Itoa(uid))
+}
+
 func init() {
+	// 过滤器函数，所有页面都要判断登录
+	beego.InsertFilter("/*", beego.BeforeRouter, FilterUser)
+
 	// 路由配置 https://www.jianshu.com/p/417fcc5841f8
 	// beego.AutoRouter(&controllers.MainController{})
 	beego.Router("/", &controllers.MainController{})

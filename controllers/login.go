@@ -5,8 +5,6 @@ import (
 	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/core/logs"
 	beego "github.com/beego/beego/v2/server/web"
-	"strconv"
-	"time"
 )
 
 type LoginController struct {
@@ -14,9 +12,13 @@ type LoginController struct {
 }
 
 func (c *LoginController) Get() {
-	uid := c.Ctx.GetCookie("beego_uid")
-	if uid != "" {
-		c.Redirect("/index", 302)
+	//uid := c.Ctx.GetCookie("beego_uid")
+	uid := c.GetSession("beego_uid")
+	if value, ok := uid.(int); ok {
+		logs.Info(value, ok)
+		if value > 0 {
+			c.Redirect("/index", 302)
+		}
 	}
 	c.ViewPath = "views"
 	c.TplName = "login.tpl"
@@ -45,9 +47,9 @@ func (c *LoginController) Post() {
 		return
 	}
 	// 设置cookie
-	cokId := strconv.FormatInt(u.Id, 10)
-
-	c.Ctx.SetCookie("beego_uid", cokId, time.Second*86400*3)
+	cokId := int(u.Id)
+	//c.Ctx.SetCookie("beego_uid", cokId, time.Second*86400*3)
+	c.SetSession("beego_uid", cokId)
 	//c.Ctx.WriteString("登录成功")
 	c.Redirect("/index", 302)
 }

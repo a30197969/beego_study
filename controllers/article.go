@@ -22,6 +22,10 @@ func (c *ArticleController) Get() {
 	var articleTypes []models.ArticleType
 	o.QueryTable(models.ArticleType{}).All(&articleTypes)
 	c.Data["articleTypes"] = articleTypes
+	c.Data["headTitle"] = "添加文章页"
+	c.Layout = "layout.tpl"
+	c.LayoutSections = make(map[string]string)
+	c.LayoutSections["HtmlHead"] = "html_head.tpl"
 	c.TplName = "article.tpl"
 }
 
@@ -111,7 +115,7 @@ func (c *ArticleController) ArticleList() {
 	o := orm.NewOrmUsingDB("test")
 	// 获取频道列表
 	var articleTypes []models.ArticleType
-	articleTypesCount, err := o.QueryTable(models.ArticleType{}).All(&articleTypes)
+	_, err := o.QueryTable(models.ArticleType{}).All(&articleTypes)
 	// 查询总数
 	var articles []models.Article
 	qs := o.QueryTable(models.Article{}).RelatedSel("ArticleType")
@@ -136,13 +140,13 @@ func (c *ArticleController) ArticleList() {
 	}
 	// 当前页数据
 	start := (page - 1) * pageSize
-	num, err := qs.Limit(pageSize, start).OrderBy("-id").All(&articles) // 关联表
+	_, err = qs.Limit(pageSize, start).OrderBy("-id").All(&articles) // 关联表
 	if err != nil {
 		logs.Info(err)
 		return
 	}
-	logs.Info(articleTypesCount, count, num, pageCount)
-	logs.Info(articles)
+	//logs.Info(articleTypesCount, count, num, pageCount)
+	//logs.Info(articles)
 	c.Data["articleTypes"] = articleTypes
 	c.Data["type"] = articleTypeId
 	c.Data["articles"] = articles
@@ -155,6 +159,8 @@ func (c *ArticleController) ArticleList() {
 
 // ArticleInfo 文章详情页
 func (c *ArticleController) ArticleInfo() {
+	c.Data["headTitle"] = "编辑文章页"
+	c.Layout = "layout.tpl"
 	c.TplName = "article_info.tpl"
 	paramId := c.Ctx.Input.Param(":id")
 	id, err := strconv.ParseUint(paramId, 10, 64)
@@ -180,6 +186,23 @@ func (c *ArticleController) ArticleInfo() {
 		return
 	}
 	logs.Info(a)
+	a.Pv += 1
+	o.Update(a)
+	// 多对多插入读者
+	// 获取多对多操作对象
+	m2m := o.QueryM2M(a, "Users")
+	// 获取插入对象
+	uid, _ := c.GetSession("beego_uid").(int)
+	u := &models.User{
+		Id: int64(uid),
+	}
+	o.Read(u)
+	// 多对多插入
+	_, err = m2m.Add(u)
+	if err != nil {
+		logs.Info(err)
+		return
+	}
 	c.Data["article"] = a
 }
 
