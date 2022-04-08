@@ -178,6 +178,8 @@ func (c *ArticleController) ArticleInfo() {
 		Id: id,
 	}
 	err = o.Read(a)
+	o.LoadRelated(a, "Users")
+	logs.Info(a)
 	if err == orm.ErrNoRows {
 		c.Redirect("/article_list", 302)
 		return
@@ -185,7 +187,6 @@ func (c *ArticleController) ArticleInfo() {
 		c.Redirect("/article_list", 302)
 		return
 	}
-	logs.Info(a)
 	a.Pv += 1
 	o.Update(a)
 	// 多对多插入读者
