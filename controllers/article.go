@@ -148,7 +148,7 @@ func (c *ArticleController) ArticleList() {
 	//logs.Info(articleTypesCount, count, num, pageCount)
 	//logs.Info(articles)
 	c.Data["articleTypes"] = articleTypes
-	c.Data["type"] = articleTypeId
+	c.Data["articleTypeId"] = articleTypeId
 	c.Data["articles"] = articles
 	c.Data["message"] = msg
 	c.Data["count"] = count
@@ -178,8 +178,6 @@ func (c *ArticleController) ArticleInfo() {
 		Id: id,
 	}
 	err = o.Read(a)
-	o.LoadRelated(a, "Users")
-	logs.Info(a)
 	if err == orm.ErrNoRows {
 		c.Redirect("/article_list", 302)
 		return
@@ -187,9 +185,7 @@ func (c *ArticleController) ArticleInfo() {
 		c.Redirect("/article_list", 302)
 		return
 	}
-	a.Pv += 1
-	o.Update(a)
-	// 多对多插入读者
+	// 多对多插入浏览者
 	// 获取多对多操作对象
 	m2m := o.QueryM2M(a, "Users")
 	// 获取插入对象
@@ -204,6 +200,16 @@ func (c *ArticleController) ArticleInfo() {
 		logs.Info(err)
 		return
 	}
+	// PV自增处理
+	a.Pv += 1
+	o.Update(a)
+	// 多对多的惰性查询，漏出最近的浏览者
+	// o.LoadRelated(a, "Users") // 第二个参数放的字段名
+
+	var viewUsers orm.ParamsList
+	o.QueryTable(models.User{}).Distinct().OrderBy("-id").Filter("Articles__Article__Id", id).ValuesFlat(&viewUsers, "Name")
+	logs.Info(viewUsers)
+	c.Data["viewUsers"] = viewUsers
 	c.Data["article"] = a
 }
 

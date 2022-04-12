@@ -91,8 +91,12 @@
                 <input name="page" value="{{.page}}" type="hidden">
                 <select name="type" onchange="submit()">
                     <option value="0">请选择</option>
-                    {{range $i,$v := .articleTypes}}
-                    <option value="{{$v.Id}}">{{$v.Name}}</option>
+                    {{range $index,$v := .articleTypes}}
+                        {{if compare $.articleTypeId $v.Id}}
+                            <option value="{{$v.Id}}" selected="true">{{$v.Name}}</option>
+                        {{else}}
+                            <option value="{{$v.Id}}">{{$v.Name}}</option>
+                        {{end}}
                     {{end}}
                 </select>
             </div>

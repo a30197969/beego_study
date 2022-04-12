@@ -10,7 +10,14 @@
         <input type="file" name="pic">
         <img width="400px;" src="/static/img/{{.article.QiniuKey}}"/>
         <br/><br/>
-        <label>作者：<input style="width: 300px" type="text" name="author" placeholder="" value="{{.article.Author}}"/></label>
+        <label>作者：<input style="width: 300px" type="text" name="author" placeholder=""
+                         value="{{.article.Author}}"/></label>
+        <br/><br/>
+        <label>最近浏览：
+            {{range $index,$val:=.viewUsers}}
+            <span>{{$val}}</span>
+            {{end}}
+        </label>
         <br/><br/>
         <input type="submit" value="修改">
         <span>{{.message}}</span>

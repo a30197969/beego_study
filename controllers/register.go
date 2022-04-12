@@ -37,6 +37,7 @@ func (c *RegisterController) Post() {
 	id, err := models.InsertUser(name, password)
 	if err != nil {
 		c.Data["message"] = "写入数据库失败"
+		logs.Info(err)
 		return
 	}
 	c.Data["message"] = "注册成功，ID：" + strconv.FormatInt(id, 10)

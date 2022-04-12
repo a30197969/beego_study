@@ -17,7 +17,7 @@ func (c *LoginController) Get() {
 	if value, ok := uid.(int); ok {
 		logs.Info(value, ok)
 		if value > 0 {
-			c.Redirect("/index", 302)
+			c.Redirect("/article_list", 302)
 		}
 	}
 	c.ViewPath = "views"
@@ -51,5 +51,5 @@ func (c *LoginController) Post() {
 	//c.Ctx.SetCookie("beego_uid", cokId, time.Second*86400*3)
 	c.SetSession("beego_uid", cokId)
 	//c.Ctx.WriteString("登录成功")
-	c.Redirect("/index", 302)
+	c.Redirect("/article_list", 302)
 }
